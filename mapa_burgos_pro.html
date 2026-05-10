@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>Mapa interactivo Burgos PRO</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<style>
+body { margin:0; font-family:Arial; }
+#map { height:100vh; }
+
+#panel {
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:250px;
+  background:white;
+  padding:10px;
+  border-radius:10px;
+}
+
+#menu {
+  position:absolute;
+  top:10px;
+  left:10px;
+}
+
+#menu button {
+  display:block;
+  margin-bottom:5px;
+  padding:8px;
+  background:#0078D7;
+  color:white;
+  border:none;
+}
+
+textarea { width:100%; height:100px; }
+</style>
+</head>
+
+<body>
+
+<div id="menu">
+<button onclick="map.setView([20,0],2)">🌍 Mundo</button>
+<button onclick="map.setView([50,10],4)">🇪🇺 UE</button>
+<button onclick="map.setView([40,-3],6)">🇪🇸 España</button>
+<button onclick="map.setView([42,-4],7)">Castilla y León</button>
+<button onclick="map.setView([42.34,-3.69],10)">Burgos</button>
+</div>
+
+<div id="panel">
+<h3 id="titulo">Selecciona un lugar</h3>
+<textarea>Escribe aquí tu información...</textarea>
+</div>
+
+<div id="map"></div>
+
+<script>
+var map = L.map('map').setView([20,0],2);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+.addTo(map);
+
+function crear(nombre, lat, lon){
+  L.marker([lat,lon]).addTo(map)
+  .on('click', function(){
+    document.getElementById("titulo").innerText = nombre;
+  });
+}
+
+// Lugares
+crear("Burgos",42.34,-3.69);
+crear("Castilla y León",42,-4);
+crear("España",40,-3);
+crear("UE",50,10);
+
+// Pueblos
+crear("Cogollos",42.286,-3.581);
+crear("Isar",42.366,-3.925);
+crear("Cardeñadijo",42.302,-3.639);
+crear("Las Quintanillas",42.372,-3.823);
+crear("Orbaneja Riopico",42.401,-3.583);
+crear("Rubena",42.390,-3.570);
+crear("Saldaña de Burgos",42.260,-3.699);
+crear("Arcos",42.250,-3.760);
+crear("Buniel",42.310,-3.835);
+crear("Albillos",42.285,-3.790);
+
+</script>
+
+</body>
+</html>
