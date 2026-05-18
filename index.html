@@ -91,6 +91,23 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
   f.properties.name === "Castilla and León"
 );
 
+fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-regions.geojson')
+  .then(res => res.json())
+  .then(data => {
+
+    var cyl = data.features.filter(f => f.properties.name === "Castilla y León");
+
+    L.geoJSON(cyl, {
+      style: {
+        color: 'green',
+        weight: 3,
+        fillColor: '#00ff00',
+        fillOpacity: 0.15
+      }
+    }).addTo(map);
+
+  });
+
     L.geoJSON(burgos, {
       style: {
         color: 'red',
