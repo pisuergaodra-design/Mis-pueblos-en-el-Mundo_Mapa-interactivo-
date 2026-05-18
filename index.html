@@ -63,10 +63,13 @@ var map = L.map('map').setView([20,0],2);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
 
-function crear(nombre, lat, lon){
-  L.marker([lat,lon]).addTo(map)
-  .on('click', function(){
-    document.getElementById("titulo").innerText = nombre;
+
+function crear(nombre, lat, lon) {
+  L.marker([lat, lon]).addTo(map)
+    .bindPopup(`
+      <b>${nombre}</b><br>
+      <img src="img/${nombre}.jpg" width="200">
+
   });
 }
 
