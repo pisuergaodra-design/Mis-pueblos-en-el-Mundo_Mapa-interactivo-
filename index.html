@@ -64,7 +64,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
 
 
-unction crear(nombre, lat, lon, imagen = null) {
+function crear(nombre, lat, lon, imagen = null) {
   let imgFinal = imagen ? imagen : "blanco.jpg";
 
   let contenido = `<b>${nombre}</b><br>`;
