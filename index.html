@@ -64,11 +64,15 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
 
 
-function crear(nombre, lat, lon) {
-  L.marker([lat, lon]).addTo(map)
-    .bindPopup(`
-      <b>${nombre}</b><br>
-      <img src="img/${nombre}.jpg" width="200">
+function crear(nombre, lat, lon, imagen = null) {
+  let contenido = `<b>${nombre}</b><br>`;
+
+  if (imagen) {
+    contenido += `<img src="${imagen}" width="200">`;
+  }
+
+  L.marker([lat, lon]).addTo(map).bindPopup(contenido);
+}
 
   });
 }
@@ -80,18 +84,18 @@ crear("España",40,-3);
 crear("UE",50,10);
 
 // Pueblos
-crear("Cogollos",42.286,-3.581,"cogollos.jpg);
+crear("Cogollos",42.286,-3.581,"cogollos.jpg");
 crear("Isar",42.366,-3.925);
 crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
 crear("Las Quintanillas",42.372,-3.823,"lasquintanillas.jpg");
 crear("Orbaneja Riopico",42.401,-3.583,"orbaneja.jpg");
 crear("Rubena",42.390,-3.570,"rubena.jpg");
 crear("Saldaña de Burgos",42.260,-3.699,"saldana.jpg");
-crear("Arcos",42.250,-3.760, "arcos.jpg");
+crear("Arcos",42.250,-3.760,"arcos.jpg");
 crear("Buniel",42.310,-3.835);
 crear("Albillos",42.285,-3.790);
-crear("Palacios de Benaver",42.105, -4.168,"palaciosbenaver.jpg");
-crear("Villanueva de las Carretas", 42.329, -3.799);
+crear("Palacios de Benaver",42.105,-4.168,"palaciosbenaver.jpg");
+crear("Villanueva de las Carretas",42.329,-3.799);
 </script>
 
 </body>
