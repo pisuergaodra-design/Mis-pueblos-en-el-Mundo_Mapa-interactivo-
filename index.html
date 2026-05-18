@@ -81,12 +81,27 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
   
 
+var map = L.map('map').setView([40, -3], 6);
 
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+.addTo(map);
+
+// 🔵 FUNCIÓN PARA CREAR MARCADORES
+function crear(nombre, lat, lon, imagen = null) {
+  let imgFinal = imagen ? imagen : "blanco.jpg";
+
+  let contenido = `<b>${nombre}</b><br>`;
+  contenido += `./${imgFinal}`;
+
+  L.marker([lat, lon]).addTo(map).bindPopup(contenido);
+}
+
+// 🔄 CARGAR TODO EN ORDEN
 fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-regions.geojson')
   .then(res => res.json())
   .then(regiones => {
 
-    // 🟢 Castilla y León
+    // 🟢 CASTILLA Y LEÓN
     var cyl = regiones.features.filter(f => f.properties.name === "Castilla y León");
 
     L.geoJSON(cyl, {
@@ -98,8 +113,7 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
       }
     }).addTo(map);
 
-
-    // 🔴 Ahora cargamos provincias (OTRO fetch dentro)
+    // 🔴 AHORA BURGOS
     fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson')
       .then(res => res.json())
       .then(data => {
@@ -115,7 +129,7 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
           }
         }).addTo(map);
 
-        // centramos en Castilla y León (mejor que Burgos ahora)
+        // 📍 CENTRAR EN CASTILLA Y LEÓN
         map.fitBounds(L.geoJSON(cyl).getBounds());
 
         // 📍 PUEBLOS
@@ -126,6 +140,11 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
         crear("Orbaneja Riopico",42.401,-3.583,"orbaneja.jpg");
         crear("Rubena",42.390,-3.570,"rubena.jpg");
         crear("Saldaña de Burgos",42.260,-3.699,"saldana.jpg");
+        crear("Arcos",42.250,-3.760,"arcos.jpg");
+
+      });
+
+  });
         crear("Arcos",42.250,-3.760,"arcos.jpg");
         crear("Buniel",42.310,-3.835);
         crear("Albillos",42.285,-3.790);
