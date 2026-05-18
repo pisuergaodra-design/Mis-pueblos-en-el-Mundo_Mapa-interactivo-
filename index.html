@@ -98,7 +98,22 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
     map.fitBounds(L.geoJSON(burgos).getBounds());
   });
 
+// Pueblos
+crear("Cogollos",42.286,-3.581,"cogollos.jpg");
+crear("Isar",42.366,-3.925);
+crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
+crear("Las Quintanillas",42.372,-3.823,"lasquintanillas.jpg");
+crear("Orbaneja Riopico",42.401,-3.583,"orbaneja.jpg");
+crear("Rubena",42.390,-3.570,"rubena.jpg");
+crear("Saldaña de Burgos",42.260,-3.699,"saldana.jpg");
+crear("Arcos",42.250,-3.760,"arcos.jpg");
+crear("Buniel",42.310,-3.835);
+crear("Albillos",42.285,-3.790);
+crear("Palacios de Benaver",42.105,-4.168,"palaciosbenaver.jpg");
+crear("Villanueva de las Carretas",42.329,-3.799);
 
+
+  
 L.geoJSON(burgosGeo, {
   style: {
     color: 'blue',
@@ -130,19 +145,7 @@ crear("Castilla y León",42,-4);
 crear("España",40,-3);
 crear("UE",50,10);
 
-// Pueblos
-crear("Cogollos",42.286,-3.581,"cogollos.jpg");
-crear("Isar",42.366,-3.925);
-crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
-crear("Las Quintanillas",42.372,-3.823,"lasquintanillas.jpg");
-crear("Orbaneja Riopico",42.401,-3.583,"orbaneja.jpg");
-crear("Rubena",42.390,-3.570,"rubena.jpg");
-crear("Saldaña de Burgos",42.260,-3.699,"saldana.jpg");
-crear("Arcos",42.250,-3.760,"arcos.jpg");
-crear("Buniel",42.310,-3.835);
-crear("Albillos",42.285,-3.790);
-crear("Palacios de Benaver",42.105,-4.168,"palaciosbenaver.jpg");
-crear("Villanueva de las Carretas",42.329,-3.799);
+
 </script>
 
 </body>
