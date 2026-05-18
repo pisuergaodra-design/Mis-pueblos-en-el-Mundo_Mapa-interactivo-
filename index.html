@@ -72,6 +72,19 @@ textarea { width:100%; height:100px; }
 <script>
 var map = L.map('map').setView([20,0],2);
 
+var burgosZona = L.polygon([
+  [42.9, -4.5],
+  [42.8, -3.0],
+  [42.5, -2.6],
+  [41.8, -2.8],
+  [41.6, -3.6],
+  [41.8, -4.5]
+], {
+  color: 'red',
+  fillColor: '#f03',
+  fillOpacity: 0.2
+}).addTo(map);
+
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
 
