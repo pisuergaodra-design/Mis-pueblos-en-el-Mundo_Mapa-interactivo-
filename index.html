@@ -74,11 +74,7 @@ textarea { width:100%; height:100px; }
 <div id="map"></div>
 
 <script>
-var map = L.map('map').setView([20,0],2);
 
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
-.addTo(map);
   
 
 var map = L.map('map').setView([40, -3], 6);
@@ -96,8 +92,8 @@ function crear(nombre, lat, lon, imagen = null) {
   L.marker([lat, lon]).addTo(map).bindPopup(contenido);
 }
 
-// 🔄 CARGAR TODO EN ORDEN
-fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-regions.geojson')
+// ✅ SOLO PROVINCIAS 
+fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson')
   .then(res => res.json())
   .then(regiones => {
 
