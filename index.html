@@ -63,7 +63,6 @@ var map = L.map('map').setView([20,0],2);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
 
-
 function crear(nombre, lat, lon, imagen = null) {
   let contenido = `<b>${nombre}</b><br>`;
 
@@ -72,9 +71,6 @@ function crear(nombre, lat, lon, imagen = null) {
   }
 
   L.marker([lat, lon]).addTo(map).bindPopup(contenido);
-}
-
-  });
 }
 
 // Lugares
