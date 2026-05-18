@@ -91,6 +91,36 @@ var burgosZona = L.polygon([
   fillOpacity: 0.2
 }).addTo(map);
 
+var burgosGeo = {
+  "type": "Feature",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[
+      [-4.7, 42.9],
+      [-3.0, 42.9],
+      [-2.6, 42.6],
+      [-2.5, 42.2],
+      [-2.7, 41.7],
+      [-3.5, 41.5],
+      [-4.3, 41.6],
+      [-4.8, 42.0],
+      [-4.7, 42.9]
+    ]]
+  }
+};
+
+L.geoJSON(burgosGeo, {
+  style: {
+    color: 'blue',
+    weight: 2,
+    fillColor: '#3388ff',
+    fillOpacity: 0.2
+  }
+}).addTo(map);
+
+map.fitBounds(L.geoJSON(burgosGeo).getBounds());
+``
+
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
 
