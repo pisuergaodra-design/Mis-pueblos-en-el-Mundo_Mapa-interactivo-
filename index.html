@@ -63,12 +63,12 @@ var map = L.map('map').setView([20,0],2);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
 
-function crear(nombre, lat, lon, imagen = null) {
-  let contenido = `<b>${nombre}</b><br>`;
 
-  if (imagen) {
-    contenido += `<img src="${imagen}" width="200">`;
-  }
+unction crear(nombre, lat, lon, imagen = null) {
+  let imgFinal = imagen ? imagen : "blanco.jpg";
+
+  let contenido = `<b>${nombre}</b><br>`;
+  contenido += `<img src="./${imgFinal}" width="200">`;
 
   L.marker([lat, lon]).addTo(map).bindPopup(contenido);
 }
