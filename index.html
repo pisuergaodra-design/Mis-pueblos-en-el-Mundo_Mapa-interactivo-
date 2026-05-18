@@ -58,7 +58,9 @@ textarea { width:100%; height:100px; }
 <button onclick="map.setView([20,0],2)">🌍 Mundo</button>
 <button onclick="map.setView([50,10],4)">🇪🇺 UE</button>
 <button onclick="map.setView([40,-3],6)">🇪🇸 España</button>
-<button onclick="map.setView([42,-4],7)">Castilla y León</button>
+<button onclick="map.fitBounds(L.geoJSON(cyl).getBounds())">
+  Castilla y León
+</button>
 <button onclick="map.fitBounds(burgosZona.getBounds())">Burgos</button>
 ``
 
@@ -77,13 +79,34 @@ var map = L.map('map').setView([20,0],2);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
-  
+
 
 fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson')
   .then(res => res.json())
   .then(data => {
     // Filtrar solo Burgos
     var burgos = data.features.filter(f => f.properties.name === "Burgos");
+
+    var cyl = data.features.filter(f => 
+  f.properties.name === "Castilla and León"
+);
+
+fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-regions.geojson')
+  .then(res => res.json())
+  .then(data => {
+
+    var cyl = data.features.filter(f => f.properties.name === "Castilla y León");
+
+    L.geoJSON(cyl, {
+      style: {
+        color: 'green',
+        weight: 3,
+        fillColor: '#00ff00',
+        fillOpacity: 0.15
+      }
+    }).addTo(map);
+
+  });
 
     L.geoJSON(burgos, {
       style: {
@@ -97,6 +120,21 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
     // Centrar mapa en Burgos
     map.fitBounds(L.geoJSON(burgos).getBounds());
   });
+
+// Pueblos
+crear("Cogollos",42.286,-3.581,"cogollos.jpg");
+crear("Isar",42.366,-3.925);
+crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
+crear("Las Quintanillas",42.372,-3.823,"lasquintanillas.jpg");
+crear("Orbaneja Riopico",42.401,-3.583,"orbaneja.jpg");
+crear("Rubena",42.390,-3.570,"rubena.jpg");
+crear("Saldaña de Burgos",42.260,-3.699,"saldana.jpg");
+crear("Arcos",42.250,-3.760,"arcos.jpg");
+crear("Buniel",42.310,-3.835);
+crear("Albillos",42.285,-3.790);
+crear("Palacios de Benaver",42.105,-4.168,"palaciosbenaver.jpg");
+crear("Villanueva de las Carretas",42.329,-3.799);
+
 
 
 L.geoJSON(burgosGeo, {
@@ -130,20 +168,24 @@ crear("Castilla y León",42,-4);
 crear("España",40,-3);
 crear("UE",50,10);
 
-// Pueblos
-crear("Cogollos",42.286,-3.581,"cogollos.jpg");
-crear("Isar",42.366,-3.925);
-crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
-crear("Las Quintanillas",42.372,-3.823,"lasquintanillas.jpg");
-crear("Orbaneja Riopico",42.401,-3.583,"orbaneja.jpg");
-crear("Rubena",42.390,-3.570,"rubena.jpg");
-crear("Saldaña de Burgos",42.260,-3.699,"saldana.jpg");
-crear("Arcos",42.250,-3.760,"arcos.jpg");
-crear("Buniel",42.310,-3.835);
-crear("Albillos",42.285,-3.790);
-crear("Palacios de Benaver",42.105,-4.168,"palaciosbenaver.jpg");
-crear("Villanueva de las Carretas",42.329,-3.799);
+
 </script>
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
