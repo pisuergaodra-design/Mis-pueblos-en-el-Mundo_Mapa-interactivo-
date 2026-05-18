@@ -78,36 +78,26 @@ var map = L.map('map').setView([20,0],2);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
   
-var burgosZona = L.polygon([
-  [42.9, -4.5],
-  [42.8, -3.0],
-  [42.5, -2.6],
-  [41.8, -2.8],
-  [41.6, -3.6],
-  [41.8, -4.5]
-], {
-  color: 'red',
-  fillColor: '#f03',
-  fillOpacity: 0.2
-}).addTo(map);
 
-var burgosGeo = {
-  "type": "Feature",
-  "geometry": {
-    "type": "Polygon",
-    "coordinates": [[
-      [-4.7, 42.9],
-      [-3.0, 42.9],
-      [-2.6, 42.6],
-      [-2.5, 42.2],
-      [-2.7, 41.7],
-      [-3.5, 41.5],
-      [-4.3, 41.6],
-      [-4.8, 42.0],
-      [-4.7, 42.9]
-    ]]
-  }
-};
+fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson')
+  .then(res => res.json())
+  .then(data => {
+    // Filtrar solo Burgos
+    var burgos = data.features.filter(f => f.properties.name === "Burgos");
+
+    L.geoJSON(burgos, {
+      style: {
+        color: 'red',
+        weight: 3,
+        fillColor: '#ff0000',
+        fillOpacity: 0.2
+      }
+    }).addTo(map);
+
+    // Centrar mapa en Burgos
+    map.fitBounds(L.geoJSON(burgos).getBounds());
+  });
+
 
 L.geoJSON(burgosGeo, {
   style: {
