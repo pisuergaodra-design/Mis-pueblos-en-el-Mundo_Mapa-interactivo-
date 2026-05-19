@@ -100,21 +100,21 @@ function mostrarBurgos() {
 
 // Cargar datos de regiones españolas
 Promise.all([
-  // Datos de regiones españolas (geoBoundaries)
-  fetch('https://www.geoboundaries.org/data/geoBoundaries-3_0_1/ADM1/simplificationLevel_2/ESP/geoBoundaries-3_0_1-ESP-ADM1-all-bbsimplified.geojson')
+  // Datos de comunidades autónomas españolas
+  fetch('https://raw.githubusercontent.com/codeforeurope/CCAA/master/ccaa.geojson')
     .then(res => res.json())
     .catch(() => null),
-  // Alternativa: datos de provincias españolas
+  // Datos de provincias españolas
   fetch('https://raw.githubusercontent.com/simp37/GeoJson_SPAIN/master/Spain/spain-provinces.geojson')
     .then(res => res.json())
     .catch(() => null)
-]).then(([regionesData, provinciasData]) => {
+]).then(([ccaaData, provinciasData]) => {
   
-  // Cargar Castilla y León desde regiones
-  if(regionesData && regionesData.features) {
-    var cylData = regionesData.features.find(f => {
-      let name = f.properties.shapeName || f.properties.name || "";
-      return name.includes("Castilla") || name.includes("León");
+  // Cargar Castilla y León desde comunidades autónomas
+  if(ccaaData && ccaaData.features) {
+    var cylData = ccaaData.features.find(f => {
+      let name = f.properties.name || f.properties.NAMEUNIT || f.properties.shapeName || "";
+      return name.toLowerCase().includes("castilla") && name.toLowerCase().includes("león");
     });
     
     if(cylData) {
@@ -128,6 +128,8 @@ Promise.all([
         }
       }).addTo(map);
       console.log('Castilla y León cargada correctamente');
+    } else {
+      console.log('No se encontró Castilla y León en los datos');
     }
   }
   
@@ -135,7 +137,7 @@ Promise.all([
   if(provinciasData && provinciasData.features) {
     var burgosData = provinciasData.features.find(f => {
       let name = f.properties.name || f.properties.NAMEUNIT || "";
-      return name === "Burgos";
+      return name.toLowerCase() === "burgos";
     });
     
     if(burgosData) {
@@ -149,6 +151,8 @@ Promise.all([
       }).addTo(map);
       map.fitBounds(burgosLayer.getBounds());
       console.log('Burgos cargada correctamente');
+    } else {
+      console.log('No se encontró Burgos en los datos');
     }
   }
   
