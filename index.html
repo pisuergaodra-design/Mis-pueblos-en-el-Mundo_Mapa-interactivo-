@@ -60,7 +60,6 @@ textarea { width:100%; height:100px; }
 <button onclick="map.setView([40,-3],6)">🇪🇸 España</button>
 <button onclick="map.fitBounds(capaCyL.getBounds())">
 ``
-  Castilla y León
 </button>
 <button onclick="map.fitBounds(burgosZona.getBounds())">Burgos</button>
 ``
@@ -75,16 +74,16 @@ textarea { width:100%; height:100px; }
 <div id="map"></div>
 
 <script>
+<script>
 var map = L.map('map').setView([20,0],2);
-
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
 
-
-// Variable global para usar en botón
+// Variable global
 let capaCyL;
 
+// Cargar Castilla y León
 fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-regions.geojson')
   .then(res => res.json())
   .then(data => {
@@ -95,15 +94,16 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
 
     capaCyL = L.geoJSON(cyl, {
       style: {
-        color: '#006400',     // borde verde oscuro
+        color: '#006400',
         weight: 4,
-        fillColor: '#00ff00', // relleno verde
+        fillColor: '#00ff00',
         fillOpacity: 0.3
       }
     }).addTo(map);
 
   });
 
+// Cargar Burgos
 fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson')
   .then(res => res.json())
   .then(data => {
@@ -122,31 +122,16 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
     map.fitBounds(capaBurgos.getBounds());
   });
 
-    L.geoJSON(cyl, {
-      style: {
-        color: 'green',
-        weight: 3,
-        fillColor: '#00ff00',
-        fillOpacity: 0.15
-      }
-    }).addTo(map);
+// Función marcadores
+function crear(nombre, lat, lon, imagen = null) {
+  let imgFinal = imagen ? imagen : "blanco.jpg";
 
-  });
-
-      style: {
-        color: 'red',
-        weight: 3,
-        fillColor: '#ff0000',
-        fillOpacity: 0.2
-      }
-    }).addTo(map);
-
-    // Centrar mapa en Burgos
-    map.fitBounds(L.geoJSON(burgos).getBounds());
-  });
+  let contenido = `<b>${nombre}</b><br>`;
+  contenido += `<img src="./${imgFinal}" width="200on]).addTo(map).bindPopup(contenido);
+}
 
 // Pueblos
-crear("Cogollos",42.286,-3.581,"cogollos.jpg");
+crear("Cogollos",42.286,-3.581);
 crear("Isar",42.366,-3.925);
 crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
 crear("Las Quintanillas",42.372,-3.823,"lasquintanillas.jpg");
