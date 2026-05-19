@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<title>Mapa interactivo Burgos PRO</title>
+<meta charset="utf-8">
+<title>Mapa interactivo</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -47,8 +47,8 @@ body { margin:0; font-family:Arial; }
 
 textarea { width:100%; height:100px; }
 </style>
-</head>
 
+</head>
 <body>
 
 <div id="menu">
@@ -74,9 +74,9 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
 
 function crear(nombre, lat, lon, imagen = null) {
-  let imgFinal = imagen ? imagen : "blanco.jpg";
-  let contenido = "<b>" + nombre + "</b><br>";
-  contenido += '<img src="https://raw.githubusercontent.com/pisuergaodra-design/Mis-pueblos-en-el-Mundo_Mapa-interactivo-/main/' + imgFinal + '" width1,"cogollos.jpg");
+  let img = imagen ? imagen : "blanco.jpg";
+  let html = "<b>"+nombre+"</b><br>";
+  html += '<img src="https://raw.githubusercontent.com/pisuergaodra-design/Mis-pueblos-en-el-Mundo_Mapa-interactivo-/main/'+img+'" width="20086,-3.581,"cogollos.jpg");
 crear("Isar",42.366,-3.925);
 crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
 crear("Las Quintanillas",42.372,-3.823,"lasquintanillas.jpg");
@@ -88,3 +88,39 @@ crear("Buniel",42.310,-3.835);
 crear("Albillos",42.285,-3.790);
 crear("Palacios de Benaver",42.3925,-3.8953,"palaciosbenaver.jpg");
 crear("Palacios de Benaver",42.392,-3.895,"palaciosbenaver.jpg");
+crear("Villanueva de las Carretas",42.329,-3.799);
+
+fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson')
+.then(r => r.json())
+.then(data => {
+
+  const cyl = [
+    "Ávila","Burgos","León","Palencia",
+    "Salamanca","Segovia","Soria",
+    "Valladolid","Zamora"
+  ];
+
+  L.geoJSON(data, {
+    style: function(f) {
+
+      if (f.properties.name === "Burgos") {
+        return { color:'red', weight:4, fillColor:'red', fillOpacity:0.4 };
+      }
+
+      if (cyl.includes(f.properties.name)) {
+        return { color:'green', weight:2, fillColor:'green', fillOpacity:0.25 };
+      }
+
+      return { color:'#888', weight:1, fillOpacity:0.05 };
+    }
+  }).addTo(map);
+
+});
+
+</script>
+
+</body>
+</html>
+``
+
+
