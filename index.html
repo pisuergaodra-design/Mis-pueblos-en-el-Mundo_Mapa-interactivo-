@@ -69,7 +69,7 @@ textarea { width:100%; height:100px; }
 <div id="map"></div>
 
 <script>
-var map = L.map('map').setView([20,0],2);
+var map = L.map('map').setView([42.34,-3.69],8);
 var cylLayer = null;
 var burgosLayer = null;
 
@@ -112,9 +112,10 @@ Promise.all([
     cylLayer = L.geoJSON(cylData, {
       style: {
         color: 'green',
-        weight: 3,
-        fillColor: '#00ff00',
-        fillOpacity: 0.15
+        weight: 2,
+        fillColor: '#90EE90',
+        fillOpacity: 0.4,
+        dashArray: '5, 5'
       }
     }).addTo(map);
   }
@@ -128,8 +129,8 @@ Promise.all([
       style: {
         color: 'red',
         weight: 3,
-        fillColor: '#ff0000',
-        fillOpacity: 0.2
+        fillColor: '#FFB6C6',
+        fillOpacity: 0.35
       }
     }).addTo(map);
     
@@ -151,20 +152,62 @@ Promise.all([
   crear("Palacios de Benaver",42.392,-3.895,"palaciosbenaver.jpg");
   crear("Villanueva de las Carretas",42.329,-3.799);
   
-  // Lugares principales
-  crear("Burgos",42.34,-3.69);
-  crear("Castilla y León",42,-4);
-  crear("España",40,-3);
-  crear("UE",50,10);
-  
 }).catch(err => {
   console.error('Error cargando datos GeoJSON:', err);
-  // Si falla la carga de límites, al menos mostrar los pueblos
-  crearPueblos();
-});
-
-// Función para crear pueblos (fallback si falla la carga de GeoJSON)
-function crearPueblos() {
+  console.log('Usando contornos alternativos...');
+  
+  // Polígono alternativo de Castilla y León (simplificado)
+  var cylAlternativo = {
+    type: "FeatureCollection",
+    features: [{
+      type: "Feature",
+      properties: {name: "Castilla y León"},
+      geometry: {
+        type: "Polygon",
+        coordinates: [[
+          [-6.5, 37.5], [-6.5, 43], [-0.5, 43], [-0.5, 37.5], [-6.5, 37.5]
+        ]]
+      }
+    }]
+  };
+  
+  // Polígono alternativo de Burgos (simplificado)
+  var burgosAlternativo = {
+    type: "FeatureCollection",
+    features: [{
+      type: "Feature",
+      properties: {name: "Burgos"},
+      geometry: {
+        type: "Polygon",
+        coordinates: [[
+          [-4.3, 41.8], [-4.3, 42.7], [-2.8, 42.7], [-2.8, 41.8], [-4.3, 41.8]
+        ]]
+      }
+    }]
+  };
+  
+  // Dibujar Castilla y León alternativo
+  cylLayer = L.geoJSON(cylAlternativo, {
+    style: {
+      color: 'green',
+      weight: 2,
+      fillColor: '#90EE90',
+      fillOpacity: 0.4,
+      dashArray: '5, 5'
+    }
+  }).addTo(map);
+  
+  // Dibujar Burgos alternativo
+  burgosLayer = L.geoJSON(burgosAlternativo, {
+    style: {
+      color: 'red',
+      weight: 3,
+      fillColor: '#FFB6C6',
+      fillOpacity: 0.35
+    }
+  }).addTo(map);
+  
+  // Crear pueblos en fallback
   crear("Cogollos",42.286,-3.581,"cogollos.jpg");
   crear("Isar",42.366,-3.925);
   crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
@@ -177,14 +220,9 @@ function crearPueblos() {
   crear("Albillos",42.285,-3.790);
   crear("Palacios de Benaver",42.392,-3.895,"palaciosbenaver.jpg");
   crear("Villanueva de las Carretas",42.329,-3.799);
-  crear("Burgos",42.34,-3.69);
-  crear("Castilla y León",42,-4);
-  crear("España",40,-3);
-  crear("UE",50,10);
-}
+});
 
 </script>
 
 </body>
 </html>
-
