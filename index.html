@@ -18,8 +18,6 @@ body { margin:0; font-family:Arial; }
   height:100%;
   z-index:1;
 }
-``
-
 
 #panel {
   position:absolute;
@@ -58,12 +56,8 @@ textarea { width:100%; height:100px; }
 <button onclick="map.setView([20,0],2)">🌍 Mundo</button>
 <button onclick="map.setView([50,10],4)">🇪🇺 UE</button>
 <button onclick="map.setView([40,-3],6)">🇪🇸 España</button>
-<button onclick="map.fitBounds(L.geoJSON(cyl).getBounds())">
-  Castilla y León
-</button>
-<button onclick="map.fitBounds(burgosZona.getBounds())">Burgos</button>
-``
-
+<button onclick="mostrarCastillaYLeon()">Castilla y León</button>
+<button onclick="mostrarBurgos()">Burgos</button>
 </div>
 
 <div id="panel">
@@ -75,29 +69,24 @@ textarea { width:100%; height:100px; }
 
 <script>
 var map = L.map('map').setView([20,0],2);
-
+var cylLayer = null;
+var burgosLayer = null;
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
 
-
-fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson')
-  .then(res => res.json())
-  .then(data => {
-    // Filtrar solo Burgos
-    var burgos = data.features.filter(f => f.properties.name === "Burgos");
-
-    var cyl = data.features.filter(f => 
-  f.properties.name === "Castilla and León"
-);
-
-fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-regions.geojson')
-  .then(res => res.json())
-  .then(data => {
-
-    var cyl = data.features.filter(f => f.properties.name === "Castilla y León");
-
-    L.geoJSON(cyl, {
+// Cargar datos de regiones y provincias
+Promise.all([
+  fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-regions.geojson').then(res => res.json()),
+  fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson').then(res => res.json())
+]).then(([regionesData, provinciasData]) => {
+  
+  // Filtrar Castilla y León
+  var cylData = regionesData.features.filter(f => f.properties.name === "Castilla y León");
+  
+  // Dibujar Castilla y León
+  if(cylData.length > 0) {
+    cylLayer = L.geoJSON(cylData, {
       style: {
         color: 'green',
         weight: 3,
@@ -105,10 +94,14 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
         fillOpacity: 0.15
       }
     }).addTo(map);
-
-  });
-
-    L.geoJSON(burgos, {
+  }
+  
+  // Filtrar Burgos
+  var burgosData = provinciasData.features.filter(f => f.properties.name === "Burgos");
+  
+  // Dibujar Burgos
+  if(burgosData.length > 0) {
+    burgosLayer = L.geoJSON(burgosData, {
       style: {
         color: 'red',
         weight: 3,
@@ -116,10 +109,25 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
         fillOpacity: 0.2
       }
     }).addTo(map);
+    
+    // Centrar en Burgos por defecto
+    map.fitBounds(burgosLayer.getBounds());
+  }
+});
 
-    // Centrar mapa en Burgos
-    map.fitBounds(L.geoJSON(burgos).getBounds());
-  });
+// Función para mostrar Castilla y León
+function mostrarCastillaYLeon() {
+  if(cylLayer) {
+    map.fitBounds(cylLayer.getBounds());
+  }
+}
+
+// Función para mostrar Burgos
+function mostrarBurgos() {
+  if(burgosLayer) {
+    map.fitBounds(burgosLayer.getBounds());
+  }
+}
 
 // Pueblos
 crear("Cogollos",42.286,-3.581,"cogollos.jpg");
@@ -135,57 +143,20 @@ crear("Albillos",42.285,-3.790);
 crear("Palacios de Benaver",42.392,-3.895,"palaciosbenaver.jpg");
 crear("Villanueva de las Carretas",42.329,-3.799);
 
-
-
-L.geoJSON(burgosGeo, {
-  style: {
-    color: 'blue',
-    weight: 2,
-    fillColor: '#3388ff',
-    fillOpacity: 0.2
-  }
-}).addTo(map);
-
-map.fitBounds(L.geoJSON(burgosGeo).getBounds());
-``
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
-.addTo(map);
-
-
 function crear(nombre, lat, lon, imagen = null) {
   let imgFinal = imagen ? imagen : "blanco.jpg";
-
   let contenido = `<b>${nombre}</b><br>`;
   contenido += `<img src="./${imgFinal}" width="200">`;
-
   L.marker([lat, lon]).addTo(map).bindPopup(contenido);
 }
 
-// Lugares
+// Lugares principales
 crear("Burgos",42.34,-3.69);
 crear("Castilla y León",42,-4);
 crear("España",40,-3);
 crear("UE",50,10);
 
-
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
