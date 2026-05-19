@@ -168,7 +168,12 @@ crear("Castilla y León",42,-4);
 crear("España",40,-3);
 crear("UE",50,10);
 
-
+fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-regions.geojson')
+.then(r=>r.json())
+.then(d=>{
+  const f = d.features.find(x=>x.properties.name==="Castilla y León");
+  L.geoJSON(f,{style:{color:'green',weight:4,fillOpacity:0}}).addTo(map);
+});
 </script>
 
 </body>
