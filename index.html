@@ -18,6 +18,8 @@ body { margin:0; font-family:Arial; }
   height:100%;
   z-index:1;
 }
+``
+
 
 #panel {
   position:absolute;
@@ -44,7 +46,6 @@ body { margin:0; font-family:Arial; }
   background:#0078D7;
   color:white;
   border:none;
-  cursor:pointer;
 }
 
 textarea { width:100%; height:100px; }
@@ -57,8 +58,12 @@ textarea { width:100%; height:100px; }
 <button onclick="map.setView([20,0],2)">🌍 Mundo</button>
 <button onclick="map.setView([50,10],4)">🇪🇺 UE</button>
 <button onclick="map.setView([40,-3],6)">🇪🇸 España</button>
-<button onclick="mostrarCastillaYLeon()">Castilla y León</button>
-<button onclick="mostrarBurgos()">Burgos</button>
+<button onclick="map.fitBounds(L.geoJSON(cyl).getBounds())">
+  Castilla y León
+</button>
+<button onclick="map.fitBounds(burgosZona.getBounds())">Burgos</button>
+``
+
 </div>
 
 <div id="panel">
@@ -69,245 +74,91 @@ textarea { width:100%; height:100px; }
 <div id="map"></div>
 
 <script>
-var map = L.map('map').setView([42.34,-3.69],8);
-var cylLayer = null;
-var burgosLayer = null;
+
+var map = L.map('map').setView([40, -3], 6);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
 
-// Función para crear marcadores
+// FUNCIÓN MARCADORES
 function crear(nombre, lat, lon, imagen = null) {
   let imgFinal = imagen ? imagen : "blanco.jpg";
+
+  let contenido = `<b>${nombre}</b><br>`;
+  contenido += `<img src="./${imgFinal}" width=", lon]).addTo(map).bindPopup(contenido);
+}
+
+// SOLO BURGOS 
+fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson')
+  .then(res => res.json())
+  .then(data => {
+
+    var burgos = data.features.filter(f => f.properties.name === "Burgos");
+
+    L.geoJSON(burgos, {
+      style: {
+        color: 'red',
+        weight: 3,
+        fillOpacity: 0.2
+      }
+    }).addTo(map);
+
+    map.fitBounds(L.geoJSON(burgos).getBounds());
+
+    // PUEBLOS
+    crear("Cogollos",42.286,-3.581,"cogollos.jpg");
+    crear("Isar",42.366,-3.925);
+    crear("Cardeñadijo",42.302,-3.639,"cardenadijo.jpg");
+    crear("Las Quintanillas",42.372,-3.823,"lasquintanillas.jpg");
+    crear("Orbaneja Riopico",42.401,-3.583,"orbaneja.jpg");
+    crear("Rubena",42.390,-3.570,"rubena.jpg");
+    crear("Saldaña de Burgos",42.260,-3.699,"saldana.jpg");
+    crear("Arcos",42.250,-3.760,"arcos.jpg");   
+    crear("Buniel",42.310,-3.835);
+    crear("Albillos",42.285,-3.790);
+    crear("Palacios de Benaver",42.105,-4.168,"palaciosbenaver.jpg");
+    crear("Villanueva de las Carretas",42.329,-3.799);
+    
+});
+</script>
+``
+
+
+
+
+
+  
+L.geoJSON(burgosGeo, {
+  style: {
+    color: 'blue',
+    weight: 2,
+    fillColor: '#3388ff',
+    fillOpacity: 0.2
+  }
+}).addTo(map);
+
+map.fitBounds(L.geoJSON(burgosGeo).getBounds());
+``
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+.addTo(map);
+
+
+function crear(nombre, lat, lon, imagen = null) {
+  let imgFinal = imagen ? imagen : "blanco.jpg";
+
   let contenido = `<b>${nombre}</b><br>`;
   contenido += `<img src="./${imgFinal}" width="200">`;
+
   L.marker([lat, lon]).addTo(map).bindPopup(contenido);
 }
 
-// Función para mostrar Castilla y León
-function mostrarCastillaYLeon() {
-  if(cylLayer) {
-    map.fitBounds(cylLayer.getBounds());
-  }
-}
+// Lugares
+crear("Burgos",42.34,-3.69);
+crear("Castilla y León",42,-4);
+crear("España",40,-3);
+crear("UE",50,10);
 
-// Función para mostrar Burgos
-function mostrarBurgos() {
-  if(burgosLayer) {
-    map.fitBounds(burgosLayer.getBounds());
-  }
-}
-
-// CONTORNO DE BURGOS (coordenadas reales)
-var burgosGeoJSON = {
-  "type": "Feature",
-  "geometry": {
-    "type": "Polygon",
-    "coordinates": [[
-      [-3.91, 42.31],
-      [-3.88, 42.28],
-      [-3.85, 42.25],
-      [-3.80, 42.24],
-      [-3.75, 42.23],
-      [-3.70, 42.22],
-      [-3.65, 42.21],
-      [-3.60, 42.20],
-      [-3.55, 42.19],
-      [-3.50, 42.18],
-      [-3.45, 42.18],
-      [-3.40, 42.19],
-      [-3.35, 42.21],
-      [-3.30, 42.23],
-      [-3.25, 42.25],
-      [-3.20, 42.27],
-      [-3.15, 42.30],
-      [-3.12, 42.35],
-      [-3.10, 42.40],
-      [-3.12, 42.45],
-      [-3.15, 42.48],
-      [-3.20, 42.50],
-      [-3.25, 42.52],
-      [-3.30, 42.53],
-      [-3.35, 42.54],
-      [-3.40, 42.54],
-      [-3.45, 42.53],
-      [-3.50, 42.52],
-      [-3.55, 42.51],
-      [-3.60, 42.50],
-      [-3.65, 42.49],
-      [-3.70, 42.48],
-      [-3.75, 42.47],
-      [-3.80, 42.45],
-      [-3.85, 42.40],
-      [-3.88, 42.35],
-      [-3.91, 42.31]
-    ]]
-  }
-};
-
-// CONTORNO DE CASTILLA Y LEÓN (coordenadas reales)
-var cylGeoJSON = {
-  "type": "Feature",
-  "geometry": {
-    "type": "Polygon",
-    "coordinates": [[
-      [-6.20, 42.10],
-      [-6.10, 42.05],
-      [-6.00, 42.08],
-      [-5.90, 42.12],
-      [-5.80, 42.15],
-      [-5.70, 42.18],
-      [-5.60, 42.20],
-      [-5.50, 42.22],
-      [-5.40, 42.25],
-      [-5.30, 42.28],
-      [-5.20, 42.30],
-      [-5.10, 42.32],
-      [-5.00, 42.35],
-      [-4.90, 42.38],
-      [-4.80, 42.40],
-      [-4.70, 42.42],
-      [-4.60, 42.43],
-      [-4.50, 42.45],
-      [-4.40, 42.47],
-      [-4.30, 42.50],
-      [-4.20, 42.52],
-      [-4.10, 42.55],
-      [-4.00, 42.58],
-      [-3.90, 42.60],
-      [-3.80, 42.62],
-      [-3.70, 42.63],
-      [-3.60, 42.64],
-      [-3.50, 42.65],
-      [-3.40, 42.66],
-      [-3.30, 42.67],
-      [-3.20, 42.68],
-      [-3.10, 42.68],
-      [-3.00, 42.67],
-      [-2.90, 42.66],
-      [-2.80, 42.65],
-      [-2.70, 42.63],
-      [-2.60, 42.62],
-      [-2.50, 42.60],
-      [-2.40, 42.58],
-      [-2.30, 42.56],
-      [-2.20, 42.54],
-      [-2.10, 42.52],
-      [-2.00, 42.50],
-      [-1.90, 42.48],
-      [-1.80, 42.45],
-      [-1.70, 42.42],
-      [-1.60, 42.40],
-      [-1.50, 42.38],
-      [-1.40, 42.35],
-      [-1.30, 42.32],
-      [-1.20, 42.30],
-      [-1.10, 42.28],
-      [-1.00, 42.30],
-      [-0.95, 42.35],
-      [-0.90, 42.40],
-      [-0.85, 42.45],
-      [-0.80, 42.50],
-      [-0.75, 42.55],
-      [-0.70, 42.60],
-      [-0.80, 42.65],
-      [-0.90, 42.68],
-      [-1.00, 42.70],
-      [-1.10, 42.72],
-      [-1.20, 42.73],
-      [-1.30, 42.74],
-      [-1.40, 42.75],
-      [-1.50, 42.76],
-      [-1.60, 42.77],
-      [-1.70, 42.78],
-      [-1.80, 42.79],
-      [-1.90, 42.80],
-      [-2.00, 42.81],
-      [-2.10, 42.82],
-      [-2.20, 42.83],
-      [-2.30, 42.84],
-      [-2.40, 42.85],
-      [-2.50, 42.86],
-      [-2.60, 42.87],
-      [-2.70, 42.88],
-      [-2.80, 42.88],
-      [-2.90, 42.88],
-      [-3.00, 42.88],
-      [-3.10, 42.87],
-      [-3.20, 42.86],
-      [-3.30, 42.85],
-      [-3.40, 42.84],
-      [-3.50, 42.83],
-      [-3.60, 42.82],
-      [-3.70, 42.81],
-      [-3.80, 42.80],
-      [-3.90, 42.79],
-      [-4.00, 42.78],
-      [-4.10, 42.77],
-      [-4.20, 42.76],
-      [-4.30, 42.75],
-      [-4.40, 42.74],
-      [-4.50, 42.73],
-      [-4.60, 42.72],
-      [-4.70, 42.71],
-      [-4.80, 42.70],
-      [-4.90, 42.69],
-      [-5.00, 42.68],
-      [-5.10, 42.67],
-      [-5.20, 42.66],
-      [-5.30, 42.65],
-      [-5.40, 42.64],
-      [-5.50, 42.63],
-      [-5.60, 42.62],
-      [-5.70, 42.61],
-      [-5.80, 42.60],
-      [-5.90, 42.59],
-      [-6.00, 42.58],
-      [-6.10, 42.50],
-      [-6.15, 42.40],
-      [-6.18, 42.30],
-      [-6.20, 42.20],
-      [-6.20, 42.10]
-    ]]
-  }
-};
-
-// Dibujar Burgos
-burgosLayer = L.geoJSON(burgosGeoJSON, {
-  style: {
-    color: 'red',
-    weight: 3,
-    fillColor: '#FFB6C6',
-    fillOpacity: 0.35
-  }
-}).addTo(map);
-console.log('✓ Burgos cargada');
-
-// Dibujar Castilla y León
-cylLayer = L.geoJSON(cylGeoJSON, {
-  style: {
-    color: 'green',
-    weight: 2,
-    fillColor: '#90EE90',
-    fillOpacity: 0.2,
-    dashArray: '5, 5'
-  }
-}).addTo(map);
-console.log('✓ Castilla y León cargada');
-
-// PUEBLOS
-crear("Cogollos",42.286,-3.581,"cogollos.jpg");
-crear("Isar",42.366,-3.925);
-crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
-crear("Las Quintanillas",42.372,-3.823,"lasquintanillas.jpg");
-crear("Orbaneja Riopico",42.401,-3.583,"orbaneja.jpg");
-crear("Rubena",42.390,-3.570,"rubena.jpg");
-crear("Saldaña de Burgos",42.260,-3.699,"saldana.jpg");
-crear("Arcos",42.250,-3.760,"arcos.jpg");
-crear("Buniel",42.310,-3.835);
-crear("Albillos",42.285,-3.790);
-crear("Palacios de Benaver",42.392,-3.895,"palaciosbenaver.jpg");
-crear("Villanueva de las Carretas",42.329,-3.799);
 
 </script>
 
