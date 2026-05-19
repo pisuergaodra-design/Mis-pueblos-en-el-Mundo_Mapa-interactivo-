@@ -98,27 +98,48 @@ function mostrarBurgos() {
   }
 }
 
-// Cargar datos de regiones españolas
-Promise.all([
-  // Datos de comunidades autónomas españolas
-  fetch('https://raw.githubusercontent.com/codeforeurope/CCAA/master/ccaa.geojson')
-    .then(res => res.json())
-    .catch(() => null),
-  // Datos de provincias españolas
-  fetch('https://raw.githubusercontent.com/simp37/GeoJson_SPAIN/master/Spain/spain-provinces.geojson')
-    .then(res => res.json())
-    .catch(() => null)
-]).then(([ccaaData, provinciasData]) => {
-  
-  // Cargar Castilla y León desde comunidades autónomas
-  if(ccaaData && ccaaData.features) {
-    var cylData = ccaaData.features.find(f => {
-      let name = f.properties.name || f.properties.NAMEUNIT || f.properties.shapeName || "";
-      return name.toLowerCase().includes("castilla") && name.toLowerCase().includes("león");
+// Cargar datos GeoJSON
+fetch('https://raw.githubusercontent.com/simp37/GeoJson_SPAIN/master/Spain/spain-provinces.geojson')
+  .then(res => res.json())
+  .then(provinciasData => {
+    console.log('Datos cargados:', provinciasData.features.length, 'provincias');
+    
+    // Cargar Burgos desde provincias
+    if(provinciasData && provinciasData.features) {
+      var burgosData = provinciasData.features.find(f => {
+        let name = f.properties.name || f.properties.NAMEUNIT || "";
+        console.log('Provincia encontrada:', name);
+        return name.toLowerCase() === "burgos";
+      });
+      
+      if(burgosData) {
+        burgosLayer = L.geoJSON(burgosData, {
+          style: {
+            color: 'red',
+            weight: 3,
+            fillColor: '#FFB6C6',
+            fillOpacity: 0.35
+          }
+        }).addTo(map);
+        map.fitBounds(burgosLayer.getBounds());
+        console.log('✓ Burgos cargada correctamente');
+      } else {
+        console.log('✗ No se encontró Burgos');
+      }
+    }
+    
+    // Dibujar Castilla y León uniendo sus provincias
+    var cyl_provincias = ['Ávila', 'Burgos', 'León', 'Palencia', 'Segovia', 'Soria', 'Valladolid', 'Zamora'];
+    var cylFeatures = provinciasData.features.filter(f => {
+      let name = f.properties.name || f.properties.NAMEUNIT || "";
+      return cyl_provincias.includes(name);
     });
     
-    if(cylData) {
-      cylLayer = L.geoJSON(cylData, {
+    if(cylFeatures.length > 0) {
+      cylLayer = L.geoJSON({
+        type: 'FeatureCollection',
+        features: cylFeatures
+      }, {
         style: {
           color: 'green',
           weight: 2,
@@ -127,66 +148,42 @@ Promise.all([
           dashArray: '5, 5'
         }
       }).addTo(map);
-      console.log('Castilla y León cargada correctamente');
+      console.log('✓ Castilla y León cargada correctamente (' + cylFeatures.length + ' provincias)');
     } else {
-      console.log('No se encontró Castilla y León en los datos');
+      console.log('✗ No se encontraron provincias de Castilla y León');
     }
-  }
-  
-  // Cargar Burgos desde provincias
-  if(provinciasData && provinciasData.features) {
-    var burgosData = provinciasData.features.find(f => {
-      let name = f.properties.name || f.properties.NAMEUNIT || "";
-      return name.toLowerCase() === "burgos";
-    });
     
-    if(burgosData) {
-      burgosLayer = L.geoJSON(burgosData, {
-        style: {
-          color: 'red',
-          weight: 3,
-          fillColor: '#FFB6C6',
-          fillOpacity: 0.35
-        }
-      }).addTo(map);
-      map.fitBounds(burgosLayer.getBounds());
-      console.log('Burgos cargada correctamente');
-    } else {
-      console.log('No se encontró Burgos en los datos');
-    }
-  }
-  
-}).then(() => {
-  // PUEBLOS
-  crear("Cogollos",42.286,-3.581,"cogollos.jpg");
-  crear("Isar",42.366,-3.925);
-  crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
-  crear("Las Quintanillas",42.372,-3.823,"lasquintanillas.jpg");
-  crear("Orbaneja Riopico",42.401,-3.583,"orbaneja.jpg");
-  crear("Rubena",42.390,-3.570,"rubena.jpg");
-  crear("Saldaña de Burgos",42.260,-3.699,"saldana.jpg");
-  crear("Arcos",42.250,-3.760,"arcos.jpg");
-  crear("Buniel",42.310,-3.835);
-  crear("Albillos",42.285,-3.790);
-  crear("Palacios de Benaver",42.392,-3.895,"palaciosbenaver.jpg");
-  crear("Villanueva de las Carretas",42.329,-3.799);
-}).catch(err => {
-  console.error('Error cargando datos GeoJSON:', err);
-  
-  // Crear pueblos en fallback
-  crear("Cogollos",42.286,-3.581,"cogollos.jpg");
-  crear("Isar",42.366,-3.925);
-  crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
-  crear("Las Quintanillas",42.372,-3.823,"lasquintanillas.jpg");
-  crear("Orbaneja Riopico",42.401,-3.583,"orbaneja.jpg");
-  crear("Rubena",42.390,-3.570,"rubena.jpg");
-  crear("Saldaña de Burgos",42.260,-3.699,"saldana.jpg");
-  crear("Arcos",42.250,-3.760,"arcos.jpg");
-  crear("Buniel",42.310,-3.835);
-  crear("Albillos",42.285,-3.790);
-  crear("Palacios de Benaver",42.392,-3.895,"palaciosbenaver.jpg");
-  crear("Villanueva de las Carretas",42.329,-3.799);
-});
+    // PUEBLOS
+    crear("Cogollos",42.286,-3.581,"cogollos.jpg");
+    crear("Isar",42.366,-3.925);
+    crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
+    crear("Las Quintanillas",42.372,-3.823,"lasquintanillas.jpg");
+    crear("Orbaneja Riopico",42.401,-3.583,"orbaneja.jpg");
+    crear("Rubena",42.390,-3.570,"rubena.jpg");
+    crear("Saldaña de Burgos",42.260,-3.699,"saldana.jpg");
+    crear("Arcos",42.250,-3.760,"arcos.jpg");
+    crear("Buniel",42.310,-3.835);
+    crear("Albillos",42.285,-3.790);
+    crear("Palacios de Benaver",42.392,-3.895,"palaciosbenaver.jpg");
+    crear("Villanueva de las Carretas",42.329,-3.799);
+  })
+  .catch(err => {
+    console.error('✗ Error cargando datos GeoJSON:', err);
+    
+    // Fallback: crear pueblos sin delimitaciones
+    crear("Cogollos",42.286,-3.581,"cogollos.jpg");
+    crear("Isar",42.366,-3.925);
+    crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
+    crear("Las Quintanillas",42.372,-3.823,"lasquintanillas.jpg");
+    crear("Orbaneja Riopico",42.401,-3.583,"orbaneja.jpg");
+    crear("Rubena",42.390,-3.570,"rubena.jpg");
+    crear("Saldaña de Burgos",42.260,-3.699,"saldana.jpg");
+    crear("Arcos",42.250,-3.760,"arcos.jpg");
+    crear("Buniel",42.310,-3.835);
+    crear("Albillos",42.285,-3.790);
+    crear("Palacios de Benaver",42.392,-3.895,"palaciosbenaver.jpg");
+    crear("Villanueva de las Carretas",42.329,-3.799);
+  });
 
 </script>
 
