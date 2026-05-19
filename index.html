@@ -45,7 +45,10 @@ body { margin:0; font-family:Arial; }
   z-index:1000;
 }
 
-textarea { width:100%; height:100px; }
+textarea {
+  width:100%;
+  height:100px;
+}
 </style>
 </head>
 
@@ -70,13 +73,12 @@ textarea { width:100%; height:100px; }
 
 var map = L.map('map').setView([40,-3],6);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
-.addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 function crear(nombre, lat, lon, imagen = null) {
   let imgFinal = imagen ? imagen : "blanco.jpg";
   let contenido = "<b>" + nombre + "</b><br>";
-  contenido += '<img src="https://raw.githubusercontent.com/pisuergaodra-design/Mis-pueblos-en-el-Mundo_Mapa-interactivo-/main/' + imgFinal + '" width="6,-3.581,"cogollos.jpg");
+  contenido += '<img src="https://raw.githubusercontent.com/pisuergaodra-design/Mis-pueblos-en-el-Mundo_Mapa-interactivo-/main/' + imgFinal + '" width="200cogollos.jpg");
 crear("Isar",42.366,-3.925);
 crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
 crear("Las Quintanillas",42.372,-3.823,"lasquintanillas.jpg");
@@ -135,4 +137,3 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
 
 </body>
 </html>
- 
