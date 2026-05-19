@@ -58,7 +58,8 @@ textarea { width:100%; height:100px; }
 <button onclick="map.setView([20,0],2)">🌍 Mundo</button>
 <button onclick="map.setView([50,10],4)">🇪🇺 UE</button>
 <button onclick="map.setView([40,-3],6)">🇪🇸 España</button>
-<button onclick="map.fitBounds(L.geoJSON(cyl).getBounds())">
+<button onclick="map.fitBounds(capaCyL.getBounds())">
+``
   Castilla y León
 </button>
 <button onclick="map.fitBounds(burgosZona.getBounds())">Burgos</button>
@@ -81,21 +82,45 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 .addTo(map);
 
 
-fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson')
-  .then(res => res.json())
-  .then(data => {
-    // Filtrar solo Burgos
-    var burgos = data.features.filter(f => f.properties.name === "Burgos");
-
-    var cyl = data.features.filter(f => 
-  f.properties.name === "Castilla and León"
-);
+// Variable global para usar en botón
+let capaCyL;
 
 fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-regions.geojson')
   .then(res => res.json())
   .then(data => {
 
-    var cyl = data.features.filter(f => f.properties.name === "Castilla y León");
+    var cyl = data.features.filter(f => 
+      f.properties.name === "Castilla y León"
+    );
+
+    capaCyL = L.geoJSON(cyl, {
+      style: {
+        color: '#006400',     // borde verde oscuro
+        weight: 4,
+        fillColor: '#00ff00', // relleno verde
+        fillOpacity: 0.3
+      }
+    }).addTo(map);
+
+  });
+
+fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson')
+  .then(res => res.json())
+  .then(data => {
+
+    var burgos = data.features.filter(f => f.properties.name === "Burgos");
+
+    var capaBurgos = L.geoJSON(burgos, {
+      style: {
+        color: 'red',
+        weight: 3,
+        fillColor: '#ff0000',
+        fillOpacity: 0.2
+      }
+    }).addTo(map);
+
+    map.fitBounds(capaBurgos.getBounds());
+  });
 
     L.geoJSON(cyl, {
       style: {
@@ -108,7 +133,6 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
 
   });
 
-    L.geoJSON(burgos, {
       style: {
         color: 'red',
         weight: 3,
@@ -147,11 +171,7 @@ L.geoJSON(burgosGeo, {
   }
 }).addTo(map);
 
-map.fitBounds(L.geoJSON(burgosGeo).getBounds());
-``
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
-.addTo(map);
 
 
 function crear(nombre, lat, lon, imagen = null) {
