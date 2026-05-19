@@ -98,25 +98,26 @@ function mostrarBurgos() {
   }
 }
 
-// Cargar datos de regiones y provincias con contornos exactos
+// Cargar datos de regiones españolas
 Promise.all([
-  // Datos de regiones españolas con contornos exactos
-  fetch('https://raw.githubusercontent.com/codeforspain/datos/master/geo/regionesCCAA.geojson').then(res => res.json()).catch(() => null),
+  // Datos de regiones españolas (geoBoundaries)
+  fetch('https://www.geoboundaries.org/data/geoBoundaries-3_0_1/ADM1/simplificationLevel_2/ESP/geoBoundaries-3_0_1-ESP-ADM1-all-bbsimplified.geojson')
+    .then(res => res.json())
+    .catch(() => null),
   // Alternativa: datos de provincias españolas
-  fetch('https://raw.githubusercontent.com/codeforspain/datos/master/geo/provincias.geojson').then(res => res.json()).catch(() => null)
+  fetch('https://raw.githubusercontent.com/simp37/GeoJson_SPAIN/master/Spain/spain-provinces.geojson')
+    .then(res => res.json())
+    .catch(() => null)
 ]).then(([regionesData, provinciasData]) => {
   
-  let cylEncontrada = false;
-  let burgosEncontrada = false;
-  
-  // Intentar cargar Castilla y León desde regiones
+  // Cargar Castilla y León desde regiones
   if(regionesData && regionesData.features) {
-    var cylData = regionesData.features.filter(f => 
-      (f.properties.name && f.properties.name.includes("Castilla")) ||
-      (f.properties.CCAA && f.properties.CCAA.includes("Castilla"))
-    );
+    var cylData = regionesData.features.find(f => {
+      let name = f.properties.shapeName || f.properties.name || "";
+      return name.includes("Castilla") || name.includes("León");
+    });
     
-    if(cylData.length > 0) {
+    if(cylData) {
       cylLayer = L.geoJSON(cylData, {
         style: {
           color: 'green',
@@ -126,19 +127,18 @@ Promise.all([
           dashArray: '5, 5'
         }
       }).addTo(map);
-      cylEncontrada = true;
+      console.log('Castilla y León cargada correctamente');
     }
   }
   
-  // Intentar cargar Burgos desde provincias
+  // Cargar Burgos desde provincias
   if(provinciasData && provinciasData.features) {
-    var burgosData = provinciasData.features.filter(f => 
-      (f.properties.name && f.properties.name === "Burgos") ||
-      (f.properties.NAMEUNIT && f.properties.NAMEUNIT === "Burgos") ||
-      (f.properties.provincia && f.properties.provincia.includes("Burgos"))
-    );
+    var burgosData = provinciasData.features.find(f => {
+      let name = f.properties.name || f.properties.NAMEUNIT || "";
+      return name === "Burgos";
+    });
     
-    if(burgosData.length > 0) {
+    if(burgosData) {
       burgosLayer = L.geoJSON(burgosData, {
         style: {
           color: 'red',
@@ -148,51 +148,12 @@ Promise.all([
         }
       }).addTo(map);
       map.fitBounds(burgosLayer.getBounds());
-      burgosEncontrada = true;
+      console.log('Burgos cargada correctamente');
     }
   }
   
-  // Si no se encuentran, intentar con otra fuente
-  if(!cylEncontrada || !burgosEncontrada) {
-    return fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_admin_1_states_provinces.geojson')
-      .then(res => res.json())
-      .then(data => {
-        // Buscar Castilla y León
-        var cylData = data.features.filter(f => 
-          f.properties.name && f.properties.name.includes("Castilla")
-        );
-        if(cylData.length > 0 && !cylEncontrada) {
-          cylLayer = L.geoJSON(cylData, {
-            style: {
-              color: 'green',
-              weight: 2,
-              fillColor: '#90EE90',
-              fillOpacity: 0.4,
-              dashArray: '5, 5'
-            }
-          }).addTo(map);
-        }
-        
-        // Buscar Burgos
-        var burgosData = data.features.filter(f => 
-          f.properties.name && f.properties.name === "Burgos"
-        );
-        if(burgosData.length > 0 && !burgosEncontrada) {
-          burgosLayer = L.geoJSON(burgosData, {
-            style: {
-              color: 'red',
-              weight: 3,
-              fillColor: '#FFB6C6',
-              fillOpacity: 0.35
-            }
-          }).addTo(map);
-          map.fitBounds(burgosLayer.getBounds());
-        }
-      });
-  }
-  
 }).then(() => {
-  // PUEBLOS - Se crean DESPUÉS de cargar los datos de regiones
+  // PUEBLOS
   crear("Cogollos",42.286,-3.581,"cogollos.jpg");
   crear("Isar",42.366,-3.925);
   crear("Cardeñadijo",42.302,-3.639,"cardeñadijo.jpg");
@@ -207,58 +168,6 @@ Promise.all([
   crear("Villanueva de las Carretas",42.329,-3.799);
 }).catch(err => {
   console.error('Error cargando datos GeoJSON:', err);
-  console.log('Usando contornos alternativos...');
-  
-  // Polígono alternativo de Castilla y León (simplificado)
-  var cylAlternativo = {
-    type: "FeatureCollection",
-    features: [{
-      type: "Feature",
-      properties: {name: "Castilla y León"},
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [-6.5, 37.5], [-6.5, 43], [-0.5, 43], [-0.5, 37.5], [-6.5, 37.5]
-        ]]
-      }
-    }]
-  };
-  
-  // Polígono alternativo de Burgos (simplificado)
-  var burgosAlternativo = {
-    type: "FeatureCollection",
-    features: [{
-      type: "Feature",
-      properties: {name: "Burgos"},
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [-4.3, 41.8], [-4.3, 42.7], [-2.8, 42.7], [-2.8, 41.8], [-4.3, 41.8]
-        ]]
-      }
-    }]
-  };
-  
-  // Dibujar Castilla y León alternativo
-  cylLayer = L.geoJSON(cylAlternativo, {
-    style: {
-      color: 'green',
-      weight: 2,
-      fillColor: '#90EE90',
-      fillOpacity: 0.4,
-      dashArray: '5, 5'
-    }
-  }).addTo(map);
-  
-  // Dibujar Burgos alternativo
-  burgosLayer = L.geoJSON(burgosAlternativo, {
-    style: {
-      color: 'red',
-      weight: 3,
-      fillColor: '#FFB6C6',
-      fillOpacity: 0.35
-    }
-  }).addTo(map);
   
   // Crear pueblos en fallback
   crear("Cogollos",42.286,-3.581,"cogollos.jpg");
@@ -279,6 +188,3 @@ Promise.all([
 
 </body>
 </html>
-
-
-    
