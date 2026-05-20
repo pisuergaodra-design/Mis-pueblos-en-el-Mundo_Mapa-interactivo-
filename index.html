@@ -5,7 +5,67 @@
 <title>Mapa interactivo Burgos PRO</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+
+var map = L.map('map').setView([42.3, -3.7], 7);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+.addTo(map);
+
+// ==========================
+// BURGOS + CASTILLA Y LEÓN REAL
+// ==========================
+
+fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson')
+.then(res => res.json())
+.then(data => {
+
+  // BURGOS
+  var burgos = data.features.filter(f => f.properties.name === "Burgos");
+
+  L.geoJSON(burgos, {
+    style: {
+      color: 'red',
+      weight: 3,
+      fillColor: '#ff0000',
+      fillOpacity: 0.2
+    }
+  }).addTo(map);
+
+  map.fitBounds(L.geoJSON(burgos).getBounds());
+
+  // CASTILLA Y LEÓN = PROVINCIAS REALES
+  const provinciasCyL = [
+    "Ávila","Burgos","León","Palencia",
+    "Salamanca","Segovia","Soria",
+    "Valladolid","Zamora"
+  ];
+
+  const cyl = data.features.filter(f =>
+    provinciasCyL.includes(f.properties.name)
+  );
+
+  L.geoJSON(cyl, {
+    style: {
+      color: "green",
+      weight: 3,
+      fillOpacity: 0.15
+    }
+  }).addTo(map);
+
+});
+
+// ==========================
+// MARCADORES
+// ==========================
+
+function crear(nombre, lat, lon) {
+  L.marker([lat, lon]).addTo(map).bindPopup(nombre);
+}
+
+crear("Burgos",42.34,-3.69);
+
+</script>
 
 <style>
 body { margin:0; font-family:Arial; }
