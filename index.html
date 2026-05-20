@@ -92,7 +92,33 @@ fetch('data/castilla_leon.geojson')
     }).addTo(map);
   });
 
+fetch('spain-provinces.geojson')   // ← el mismo que usas para Burgos
+  .then(res => res.json())
+  .then(data => {
 
+    const provinciasCyL = [
+      "Ávila", "Burgos", "León", "Palencia",
+      "Salamanca", "Segovia", "Soria",
+      "Valladolid", "Zamora"
+    ];
+
+    const cyl = {
+      type: "FeatureCollection",
+      features: data.features.filter(f =>
+        provinciasCyL.includes(f.properties.name)
+      )
+    };
+
+    L.geoJSON(cyl, {
+      style: {
+        color: "green",
+        weight: 3,
+        fillColor: "green",
+        fillOpacity: 0.2
+      }
+    }).addTo(map);
+
+  });
 
 
 
