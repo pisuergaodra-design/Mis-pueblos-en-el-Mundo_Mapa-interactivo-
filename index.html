@@ -92,33 +92,6 @@ fetch('data/castilla_leon.geojson')
     }).addTo(map);
   });
 
-fetch('spain-provinces.geojson')   // ← el mismo que usas para Burgos
-  .then(res => res.json())
-  .then(data => {
-
-    const provinciasCyL = [
-      "Ávila", "Burgos", "León", "Palencia",
-      "Salamanca", "Segovia", "Soria",
-      "Valladolid", "Zamora"
-    ];
-
-    const cyl = {
-      type: "FeatureCollection",
-      features: data.features.filter(f =>
-        provinciasCyL.includes(f.properties.name)
-      )
-    };
-
-    L.geoJSON(cyl, {
-      style: {
-        color: "green",
-        weight: 3,
-        fillColor: "green",
-        fillOpacity: 0.2
-      }
-    }).addTo(map);
-
-  });
 
 
 
@@ -164,7 +137,19 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
     // Centrar mapa en Burgos
     map.fitBounds(L.geoJSON(burgos).getBounds());
   });
+var castillaLeon = L.layerGroup([
+  L.geoJSON(avila),
+  L.geoJSON(burgos),
+  L.geoJSON(leon),
+  L.geoJSON(palencia),
+  L.geoJSON(salamanca),
+  L.geoJSON(segovia),
+  L.geoJSON(soria),
+  L.geoJSON(valladolid),
+  L.geoJSON(zamora)
+]).addTo(map);
 
+  
 // Pueblos
 crear("Cogollos",42.286,-3.581,"cogollos.jpg");
 crear("Isar",42.366,-3.925);
