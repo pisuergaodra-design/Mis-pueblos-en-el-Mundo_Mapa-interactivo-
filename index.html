@@ -216,31 +216,46 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
   const f = d.features.find(x=>x.properties.name==="Castilla y León");
   L.geoJSON(f,{style:{color:'green',weight:4,fillOpacity:0}}).addTo(map);
 });
+
+ // 1. Inicializar el mapa centrado en la provincia de Burgos
+    var map = L.map('map').setView([42.3439, -3.6969], 7); 
+
+    // 2. Cargar el mapa base de OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 3. Pintar directamente los límites de Castilla y León mediante una URL pública y estable
+    var geojsonUrl = 'https://githubusercontent.com';
+
+    fetch(geojsonUrl)
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error("No se pudo cargar el mapa externo");
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            L.geoJSON(data, {
+                filter: function(feature) {
+                    // Esta función fuerza la búsqueda ignorando mayúsculas, minúsculas o el idioma
+                    var name = feature.properties.name ? feature.properties.name.toLowerCase() : "";
+                    return name.includes("castile") || name.includes("castilla");
+                },
+                style: {
+                    color: "#d9534f",     // Color del borde (Rojo vino/castellano)
+                    weight: 3,            // Grosor de la línea
+                    fillColor: "#d9534f", // Color de relleno
+                    fillOpacity: 0.15     // Opacidad del relleno
+                }
+            }).addTo(map);
+        })
+        .catch(function(error) {
+            console.error("Detalle del fallo:", error);
+            alert("El mapa no pudo dibujar el contorno porque tu navegador bloquea archivos externos locales. Prueba subiendo los cambios a GitHub Pages para verlo funcionar.");
+        });
 </script>
-
-   var map = L.map('map').setView([42.3439, -3.6969], 7); // Centrado cerca de Burgos
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-
-        fetch('spain-communities.geojson')
-            .then(response => response.json())
-            .then(data => {
-                L.geoJSON(data, {
-                    filter: function(feature) {
-                        return feature.properties.name === 'Castilla y León'; 
-                    },
-                    style: {
-                        color: "#6a0dad", // Un color elegante para el contorno
-                        weight: 3,
-                        fillColor: "#6a0dad", 
-                        fillOpacity: 0.1
-                    }
-                }).addTo(map);
-            })
-            .catch(error => console.error("Error:", error));
-    </script>
+  
 </body>
 </html>
 
