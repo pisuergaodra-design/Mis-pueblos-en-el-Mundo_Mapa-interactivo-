@@ -218,7 +218,7 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
 });
 
 <script>
-  // 1. Inicializar el mapa centrado en la provincia de Burgos
+    // 1. Inicializar el mapa centrado en la provincia de Burgos
     var map = L.map('map').setView([42.3439, -3.6969], 7); 
 
     // 2. Cargar el mapa base de OpenStreetMap
@@ -226,37 +226,26 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // 3. Pintar directamente los límites de Castilla y León mediante una URL pública y estable
-    var geojsonUrl = 'https://githubusercontent.com';
+    // 3. Coordenadas fijas simplificadas para perfilar Castilla y León al instante
+    var cylLímites = [
+        [43.149, -4.836], [43.029, -4.407], [43.155, -3.876], [43.189, -3.424], // Norte (Palencia/Burgos)
+        [43.102, -3.109], [42.753, -3.101], [42.637, -2.529], [42.544, -2.497], // Límite con el País Vasco
+        [41.979, -1.897], [41.488, -2.062], [41.071, -2.315], [41.220, -2.932], // Este (Soria)
+        [41.137, -3.372], [40.753, -3.987], [40.237, -4.717], [40.224, -5.316], // Sur (Ávila/Segovia)
+        [40.312, -6.582], [40.370, -6.840], [41.149, -6.857], [41.673, -6.284], // Oeste (Salamanca/Zamora)
+        [41.943, -6.745], [42.069, -6.833], [42.305, -7.039], [42.508, -7.135], // Límite con Portugal/Galicia
+        [42.980, -6.912], [42.998, -6.340], [42.936, -5.201], [43.080, -4.896]  // Cierre norte (León)
+    ];
 
-    fetch(geojsonUrl)
-        .then(function(response) {
-            if (!response.ok) {
-                throw new Error("No se pudo cargar el mapa externo");
-            }
-            return response.json();
-        })
-        .then(function(data) {
-            L.geoJSON(data, {
-                filter: function(feature) {
-                    // Esta función fuerza la búsqueda ignorando mayúsculas, minúsculas o el idioma
-                    var name = feature.properties.name ? feature.properties.name.toLowerCase() : "";
-                    return name.includes("castile") || name.includes("castilla");
-                },
-                style: {
-                    color: "#d9534f",     // Color del borde (Rojo vino/castellano)
-                    weight: 3,            // Grosor de la línea
-                    fillColor: "#d9534f", // Color de relleno
-                    fillOpacity: 0.15     // Opacidad del relleno
-                }
-            }).addTo(map);
-        })
-        .catch(function(error) {
-            console.error("Detalle del fallo:", error);
-            alert("El mapa no pudo dibujar el contorno porque tu navegador bloquea archivos externos locales. Prueba subiendo los cambios a GitHub Pages para verlo funcionar.");
-        });
+    // 4. Dibujar el polígono directamente en el mapa
+    L.polygon(cylLímites, {
+        color: "#d9534f",      // Color del borde (Rojo vino castellano)
+        weight: 4,             // Grosor del contorno
+        fillColor: "#d9534f",  // Color de fondo
+        fillOpacity: 0.15      // Transparencia del relleno
+    }).addTo(map);
 </script>
-  
+ 
 </body>
 </html>
 
