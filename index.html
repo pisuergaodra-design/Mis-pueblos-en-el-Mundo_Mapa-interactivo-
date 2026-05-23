@@ -50,6 +50,11 @@ body { margin:0; font-family:Arial; }
 
 textarea { width:100%; height:100px; }
 </style>
+  <link rel="stylesheet" href="https://unpkg.com" />
+    <script src="https://unpkg.com"></script>
+    <style>
+        #map { height: 500px; width: 100%; margin-top: 20px; }
+    </style>
 </head>
 
 <body>
@@ -179,7 +184,7 @@ crear("Albillos",42.285,-3.790);
 crear("Palacios de Benaver",42.392,-3.895,"palaciosbenaver.jpg");
 crear("Villanueva de las Carretas",42.225,-3.992);
 
-
+<div id="map"></div>
 L.geoJSON(burgosGeo, {
   style: {
     color: 'blue',
@@ -219,6 +224,29 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
 });
 </script>
 
+   var map = L.map('map').setView([42.3439, -3.6969], 7); // Centrado cerca de Burgos
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        fetch('spain-communities.geojson')
+            .then(response => response.json())
+            .then(data => {
+                L.geoJSON(data, {
+                    filter: function(feature) {
+                        return feature.properties.name === 'Castilla y León'; 
+                    },
+                    style: {
+                        color: "#6a0dad", // Un color elegante para el contorno
+                        weight: 3,
+                        fillColor: "#6a0dad", 
+                        fillOpacity: 0.1
+                    }
+                }).addTo(map);
+            })
+            .catch(error => console.error("Error:", error));
+    </script>
 </body>
 </html>
 
