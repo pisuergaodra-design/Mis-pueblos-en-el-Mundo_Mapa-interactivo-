@@ -59,9 +59,7 @@ textarea { width:100%; height:100px; }
 <button onclick="map.setView([20,0],2)">🌍 Mundo</button>
 <button onclick="map.setView([50,10],4)">🇪🇺 UE</button>
 <button onclick="map.setView([40,-3],6)">🇪🇸 España</button>
-<button onclick="map.fitBounds(L.geoJSON(cyl).getBounds())">
-  Castilla y León
-</button>
+<button onclick="map.fitBounds(L.geoJSON(cyl).getBounds())">Castile and León</button>
 <button onclick="map.fitBounds(burgosZona.getBounds())">Burgos</button>
 ``
 
@@ -138,7 +136,7 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/pub
   .then(res => res.json())
   .then(data => {
 
-    var cyl = data.features.filter(f => f.properties.name === "Castilla y León");
+    var cyl = data.features.filter(f => f.properties.name === "Castile and León");
 
     L.geoJSON(cyl, {
       style: {
